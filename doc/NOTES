@@ -1,0 +1,19 @@
+Directives:
+
+  EraseEngine
+    Support in "server config", <VirtualHost>, <Global>, <Anonymous>,
+      <Directory>
+
+  EraseLog
+
+
+srm:
+
+  http://srm.sourceforge.net
+
+GNU shred(1):
+
+  Part of GNU coreutils
+
+Implement SITE command for requesting this feature specifically?  What
+about a mod_sftp SFTP extension, e.g. "erase@proftpd.org"?

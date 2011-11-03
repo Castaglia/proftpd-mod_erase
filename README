@@ -1,0 +1,4 @@
+The mod_erase module for ProFTPD implements a "secure delete" functionality
+(via FSIO API callback for the "unlink" function).
+
+For further module documentation, see mod_erase.html.
