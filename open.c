@@ -67,6 +67,12 @@ int erase_open(pool *p, const char *path, struct stat *st) {
   flags |= O_SYNC;
 #endif
 
+  /* What if the open(2) fails because of permissions?  Should we try
+   * to change the permissions to allow writing of the file? Answer: no.
+   * If the directory permissions do not allow the file to be modified, then
+   * that should be honored.
+   */
+
   fd = open(path, flags);
   if (fd < 0) {
     int xerrno = errno;
