@@ -1,0 +1,179 @@
+<html>
+<head>
+<title>ProFTPD module mod_erase</title>
+</head>
+
+<body bgcolor=white>
+
+<hr>
+<center>
+<h2><b>ProFTPD module <code>mod_erase</code></b></h2>
+</center>
+<hr><br>
+
+<p>
+The <code>mod_erase</code> module supports
+
+<p>
+The <code>mod_erase</code> module is contained in the <code>mod_erase/</code>
+directory, is intended for ProFTPD 1.3.5rc1 and later, and is not compiled by
+default.  Installation instructions are discussed
+<a href="#Installation">here</a>.
+
+<p>
+The most current version of <code>mod_erase</code> can be found at:
+<pre>
+  <a href="https://github.com/Castaglia/proftpd-mod_erase">https://github.com/Castaglia/proftpd-mod_erase</a>
+</pre>
+
+<h2>Author</h2>
+<p>
+Please contact TJ Saunders &lt;tj <i>at</i> castaglia.org&gt; with any
+questions, concerns, or suggestions regarding this module.
+
+<h2>Directives</h2>
+<ul>
+  <li><a href="#EraseEnable">EraseEnable</a>
+  <li><a href="#EraseEngine">EraseEngine</a>
+  <li><a href="#EraseLog">EraseLog</a>
+  <li><a href="#ErasePatterns">ErasePatterns</a>
+</ul>
+
+<hr>
+<h2><a name="EraseEnable">EraseEnable</a></h2>
+<strong>Syntax:</strong> EraseEnable <em>on|off</em><br>
+<strong>Default:</strong> None<br>
+<strong>Context:</strong> <code>&lt;Anonymous&gt;</code, <code>&lt;Directory&gt;</code>, <code>.ftpaccess</code>
+<strong>Module:</strong> mod_erase<br>
+<strong>Compatibility:</strong> 1.3.5rc1 and later
+
+<p>
+The <code>EraseEnable</code> directive can be used to
+
+<hr>
+<h2><a name="EraseEngine">EraseEngine</a></h2>
+<strong>Syntax:</strong> EraseEngine <em>on|off</em><br>
+<strong>Default:</strong> <em>off</em><br>
+<strong>Context:</strong> &quot;server config&quot;, <code>&lt;VirtualHost&gt;</code>, <code>&lt;Global&gt;</code><br>
+<strong>Module:</strong> mod_erase<br>
+<strong>Compatibility:</strong> 1.3.5rc1 and later
+
+<p>
+The <code>EraseEngine</code> directive enables or disables the module's
+support for "erasing" files upon deletion via overwrites.
+
+<hr>
+<h2><a name="EraseLog">EraseLog</a></h2>
+<strong>Syntax:</strong> EraseLog <em>file</em><br>
+<strong>Default:</strong> None<br>
+<strong>Context:</strong> server config, <code>&lt;VirtualHost&gt;</code>, <code>&lt;Global&gt;</code><br>
+<strong>Module:</strong> mod_erase<br>
+<strong>Compatibility:</strong> 1.3.5rc1 and later
+
+<p>
+The <code>EraseLog</code> directive is used to a specify a log file for
+<code>mod_erase</code> reporting and debugging, and can be done a per-server
+basis.  The <em>file</em> parameter must be the full path to the file to use for
+logging.  Note that this path must <b>not</b> be to a world-writable
+directory and, unless <code>AllowLogSymlinks</code> is explicitly set to
+<em>on</em> (generally a bad idea), the path must <b>not</b> be a symbolic
+link.
+
+<p>
+If <em>file</em> is &quot;none&quot;, no logging will be done at all; this
+setting can be used to override a <code>EraseLog</code> setting inherited from
+a <code>&lt;Global&gt;</code> context.
+
+<hr>
+<h2><a name="ErasePatterns">ErasePatterns</a></h2>
+<strong>Syntax:</strong> ErasePatterns <em>pattern1 ...</em><br>
+<strong>Default:</strong> None<br>
+<strong>Context:</strong> &quot;server config&quot;, <code>&lt;VirtualHost&gt;</code>, <code>&lt;Global&gt;</code><br>
+<strong>Module:</strong> mod_erase<br>
+<strong>Compatibility:</strong> 1.3.5rc1 and later
+
+<p>
+The <code>ErasePatterns</code> directive is used to configure how many
+rounds of overwriting are done, and which pattern of bytes is used for each
+round.
+
+<p>
+The currently implemented <em>patterns</em> are:
+<ul>
+  <li><code>AllOnes</code><br>
+  <li><code>AllZeros</code><br>
+  <li><code>Random</code><br>
+</ul>
+
+<p>
+<hr>
+<h2><a name="Installation">Installation</a></h2>
+To install <code>mod_erase</code>, go to the third-party module area in
+the proftpd source code and unpack the <code>mod_erase</code> source tarball:
+<pre>
+  $ cd <i>proftpd-dir</i>/contrib/
+  $ tar zxvf /path/to/mod_erase-<i>version</i>.tar.gz
+</pre>
+after unpacking the latest proftpd-1.3.5 (or later) source code.  For including
+<code>mod_erase</code> as a staticly linked module:
+<pre>
+  $ ./configure --with-modules=mod_erase ...
+</pre>
+Alternatively, <code>mod_erase</code> can be built as a DSO module:
+<pre>
+  $ ./configure --enable-dso --with-shared=mod_erase ...
+</pre>
+Then follow the usual steps:
+<pre>
+  $ make
+  $ make install
+</pre>
+
+<p>
+<hr>
+<h2><a name="Usage">Usage</a></h2>
+
+Caveats:
+  Performance penalties
+  Journaling filesystems
+  mod_vroot interaction issues
+
+<p>
+Example configuration:
+<pre>
+  &lt;IfModule mod_erase.c&gt;
+    EraseEngine on
+    EraseLog /var/ftpd/erase.log
+  &lt;/IfModule&gt;
+</pre>
+
+<p>
+<b>Logging</b><br>
+The <code>mod_erase</code> module supports different forms of logging.  The
+main module logging is done via the <code>EraseLog</code> directive.  For
+debugging purposes, the module also uses <a href="../howto/Tracing.html">trace logging</a>, via the module-specific log channels:
+<ul>
+  <li>erase
+</ul>
+Thus for trace logging, to aid in debugging, you would use the following in
+your <code>proftpd.conf</code>:
+<pre>
+  TraceLog /path/to/erase-trace.log
+  Trace erase:20
+</pre>
+This trace logging can generate large files; it is intended for debugging
+use only, and should be removed from any production configuration.
+
+<p>
+<hr><br>
+
+<font size=2><b><i>
+&copy; Copyright 2014 TJ Saunders<br>
+ All Rights Reserved<br>
+</i></b></font>
+
+<hr><br>
+
+</body>
+</html>
+
