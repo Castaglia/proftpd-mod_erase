@@ -162,6 +162,14 @@ static int erase_unlink(pr_fs_t *fs, const char *path) {
     int pattern;
 
     pattern = ((int *) patterns->elts)[i]; 
+
+    /* Make sure to rewind to the start of the file. */
+    if (lseek(fd, 0, SEEK_SET) == (off_t) -1) {
+      (void) pr_log_writefile(erase_logfd, MOD_ERASE_VERSION,
+        "error seeking to start of '%s': %s", path, strerror(errno));
+      break;
+    }
+
     res = erase_erase(tmp_pool, fd, st.st_size, pattern, eraser, erasersz);
     if (res < 0) {
       (void) pr_log_writefile(erase_logfd, MOD_ERASE_VERSION,

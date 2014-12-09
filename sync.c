@@ -26,8 +26,6 @@
 #include "sync.h"
 
 int erase_dsync(pool *p, const char *dir_path, int file_fd) {
-  int res;
-
 #if defined(HAVE_DIRFD)
   int dir_fd;
   DIR *dirh;

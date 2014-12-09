@@ -35,7 +35,7 @@ static int rand_fill(pool *p, unsigned char *buf, size_t bufsz) {
 #if defined(PR_USE_OPENSSL)
   RAND_pseudo_bytes(buf, bufsz);
   res = 0;
-#elsif defined(HAVE_RANDOM)
+#elif defined(HAVE_RANDOM)
   register unsigned int i = 0;
   unsigned int incr = SIZEOF_LONG;
   long r;
