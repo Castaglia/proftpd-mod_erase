@@ -12,7 +12,9 @@
 <hr><br>
 
 <p>
-The <code>mod_erase</code> module supports
+The <code>mod_erase</code> module supports "secure erasure" of files when they
+are being deleted, by attempting to overwrite the file with a configurable
+pattern of bytes, for a configurable number of rounds/passes.
 
 <p>
 The <code>mod_erase</code> module is contained in the <code>mod_erase/</code>
@@ -50,6 +52,10 @@ questions, concerns, or suggestions regarding this module.
 <p>
 The <code>EraseEnable</code> directive can be used to
 
+<p>
+The <code>EraseEnable</code> directive can be used to enable/disable secure
+erasure of a file in the directory by <code>mod_erase</code>.
+
 <hr>
 <h2><a name="EraseEngine">EraseEngine</a></h2>
 <strong>Syntax:</strong> EraseEngine <em>on|off</em><br>
@@ -60,7 +66,7 @@ The <code>EraseEnable</code> directive can be used to
 
 <p>
 The <code>EraseEngine</code> directive enables or disables the module's
-support for "erasing" files upon deletion via overwrites.
+support for "erasing" files upon deletion by overwriting the deleted file.
 
 <hr>
 <h2><a name="EraseLog">EraseLog</a></h2>
@@ -133,10 +139,6 @@ Then follow the usual steps:
 <hr>
 <h2><a name="Usage">Usage</a></h2>
 
-Caveats:
-  Performance penalties
-  Journaling filesystems
-  mod_vroot interaction issues
 
 <p>
 Example configuration:
@@ -144,14 +146,38 @@ Example configuration:
   &lt;IfModule mod_erase.c&gt;
     EraseEngine on
     EraseLog /var/ftpd/erase.log
+
+    # Configure three patterns to be used when erasing a file
+    ErasePatterns AllOnes AllZeros Random
   &lt;/IfModule&gt;
 </pre>
+
+<p>
+<b>Caveats</b><br>
+Enabling the secure erase of files via <code>mod_erase</code> <i>will</i>
+cause additional latency when files are deleted.  It will take time to write
+out the configured patterns over an entire file, especially for large files.
+If the file being deleted is on a networked filesystem (<i>e.g.</i> NFS, CIFS,
+or similar), you will also see latency of deletes increase.
+
+<p>
+If you are using any kind of journaled filesystem (such as XFS, ext3/4, or
+similar), then you should be aware that secure erase by attempting to overwrite
+the file <b>will not work</b>.  Journaled filesystems track changes via "commit
+logs", <b>not</b> by physically overwriting the data.  <i>Caveat emptor.</i>
+
+<p>
+Last, if you are also using the <code>mod_vroot</code> module, you may
+encounter issues; both <code>mod_vroot</code> and <code>mod_erase</code>
+use the same API in proftpd for hooking into filesystem operations, and that
+API does not currently support multiple modules concurrently.
 
 <p>
 <b>Logging</b><br>
 The <code>mod_erase</code> module supports different forms of logging.  The
 main module logging is done via the <code>EraseLog</code> directive.  For
-debugging purposes, the module also uses <a href="../howto/Tracing.html">trace logging</a>, via the module-specific log channels:
+debugging purposes, the module also uses <a href="../howto/Tracing.html">trace
+logging</a>, via the module-specific log channels:
 <ul>
   <li>erase
 </ul>
