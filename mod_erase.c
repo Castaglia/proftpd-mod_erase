@@ -261,7 +261,7 @@ MODRET set_eraseengine(cmd_rec *cmd) {
 /* usage: EraseLog path|"none" */
 MODRET set_eraselog(cmd_rec *cmd) {
   CHECK_ARGS(cmd, 1);
-  CHECK_CONF(cmd, CONF_ROOT);
+  CHECK_CONF(cmd, CONF_ROOT|CONF_VIRTUAL|CONF_GLOBAL);
 
   (void) add_config_param_str(cmd->argv[0], 1, cmd->argv[1]);
   return PR_HANDLED(cmd);
