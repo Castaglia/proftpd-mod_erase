@@ -106,3 +106,15 @@ References:
        Stored Unencrypted On Disk"
 
   https://www-304.ibm.com/connections/blogs/pci/entry/meeting_the_spirit_of_pci_of_secure_delete?lang=en_us
+
+Great articles, to link to Usage docs and whatnot:
+
+  http://security.stackexchange.com/questions/110734/why-didnt-oses-securely-delete-files-right-from-the-beginning-and-why-do-they
+  https://www.usenix.org/legacy/publications/library/proceedings/sec96/full_papers/gutmann/index.html
+  http://seclists.org/bugtraq/2005/Jul/464
+  https://wiki.archlinux.org/index.php/Securely_wipe_disk
+
+Other related tools:
+
+  http://www.killdisk.com/
+  http://www.dban.org/
